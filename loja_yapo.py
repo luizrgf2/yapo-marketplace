@@ -3,11 +3,11 @@ from time import sleep as tm
 
 def pegando_dados(driver:webdriver,pesquisa:str):
 
-
+    pesquisa_final = pesquisa.replace(' ', '+') #modificando a string de pesquisa para url final
 
     produtos_final = [] #lista para ir adicionando
 
-    url_base = f'https://www.yapo.cl/chile?ca=15_s&q={pesquisa}&o=' # url base
+    url_base = f'https://www.yapo.cl/chile?ca=15_s&q={pesquisa_final}&o=' # url base
 
     i = 1 # numero interavel
 
@@ -15,13 +15,24 @@ def pegando_dados(driver:webdriver,pesquisa:str):
         
         produtos = driver.execute_script('var a = document.getElementsByClassName("ad listing_thumbs"); return a') #pegando os produtos
 
-        print(len(produtos))
+        if len(produtos) == 0:
+
+            break
+
 
         for produto in produtos:
 
-            produtos_final.append(produto)
+            titulo = produto.find_element_by_class_name('title').text
+
+
+            if str(titulo).upper().find(pesquisa) != -1 or str(titulo).lower().find(pesquisa) != -1 or str(titulo).title().find(pesquisa) != -1: # virificando se existe o termo da pesquisa no titulo do anuncio.
+
+                print('Contem o termo ||'+titulo)
+
+                produtos_final.append(produto)
 
         i+=1
+
 
         driver.get(url_base+str(i))
 
@@ -67,9 +78,9 @@ def pesquisa(driver:webdriver,pesquisa:str):
         except Exception as e:
             print(e)
 
-    pesquisa_final = pesquisa.replace(' ', '+')
+    
 
-    pegando_dados(driver,pesquisa_final)
+    pegando_dados(driver,pesquisa)
 
 
     
