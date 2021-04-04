@@ -21,4 +21,4 @@ def webdriver_complete(visivel:bool):
 
 driver = webdriver_complete(True)
 
-pesquisa(driver, 'camisa')
+pesquisa(driver, 'camisa',93)

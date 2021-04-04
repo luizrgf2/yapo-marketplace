@@ -1,7 +1,25 @@
 from selenium import webdriver
 from time import sleep as tm
+from api_conversora import dolar_real
 
-def pegando_dados(driver:webdriver,pesquisa:str):
+def salvar_dados_xml_saida(output_file_name:str,produtos:list):
+
+    for produto in produtos:
+        
+        
+        
+        id_produto = produto['id']
+        image_link = produto['image_link']
+        preco = produto['preco']
+        link_produto = produto['link_produto']
+        titulo = produto['titulo']
+
+
+def pegando_dados(driver:webdriver,pesquisa:str,page_start:int):
+
+
+    '''Irá entrar no site e navegara entre paginas verificando se o anuncio possui as caracteristicas desejadas.'''
+
 
     pesquisa_final = pesquisa.replace(' ', '+') #modificando a string de pesquisa para url final
 
@@ -9,13 +27,29 @@ def pegando_dados(driver:webdriver,pesquisa:str):
 
     url_base = f'https://www.yapo.cl/chile?ca=15_s&q={pesquisa_final}&o=' # url base
 
-    i = 1 # numero interavel
+    i = page_start # numero interavel
 
-    while True:
+    while True: # irá navegar entre as páginas e irá pegar todas as informaçoes
+
+        driver.get(url_base+str(i))
+
+        while True: #esperando o carregamento do site
+
+            try:
+                driver.find_element_by_xpath('/html/body/div[1]/div[4]/div/div')
+                break
+
+            except Exception as e:
+                print(e)
+        
+        
+        
+        tm(4)
+        
         
         produtos = driver.execute_script('var a = document.getElementsByClassName("ad listing_thumbs"); return a') #pegando os produtos
 
-        if len(produtos) == 0:
+        if len(produtos) == 0: # caso venha uma lista vazia de produtos será parada a execução
 
             break
 
@@ -29,58 +63,45 @@ def pegando_dados(driver:webdriver,pesquisa:str):
 
                 print('Contem o termo ||'+titulo)
 
-                produtos_final.append(produto)
+
+
+                try:
+                    preco_parcial = float(produto.find_element_by_class_name('price').text.strip(' ').split('$ ')[1])
+                    preco = dolar_real(preco_parcial)
+
+                
+                
+                    id_produto = produto.get_attribute('id')
+                    image_link = produto.find_element_by_class_name('image').get_attribute('src')
+                    link_produto = produto.find_element_by_class_name('title').get_attribute('href')
+                    titulo = produto.find_element_by_class_name('title').text
+
+                    produtos_final.append(
+                        {'id':id_produto,
+                        'image_link':image_link,
+                        'preco':preco,
+                        'link_produto':link_produto,
+                        'titulo':titulo
+                        
+                    })
+                except Exception as e:
+                    print(e)
 
         i+=1
 
 
-        driver.get(url_base+str(i))
-
-        while True: #esperando o carregamento do site
-
-            try:
-                driver.find_element_by_xpath('/html/body/div[1]/div[4]/div/div')
-                break
-
-            except Exception as e:
-                print(e)
-        tm(4)
-        
-def pesquisa(driver:webdriver,pesquisa:str):
 
 
-    driver.get('https://www.yapo.cl/chile')
-
-    while True: #esperando o carregamento do site
-        try:
-            
-            driver.find_element_by_xpath('/html/body/div[1]/div[5]/table[2]/tbody/tr/td/table/tbody/tr[2]/td/table/tbody/tr/td[1]/div/ul/li[1]')
-            break
-
-        except Exception as e:
-            print(e)
-
-    #pesquisando pelo termo
-
-    driver.find_element_by_name('q').send_keys(pesquisa)
 
     
-    #apertando botão de pesquisa
+    return produtos_final
 
-    driver.find_element_by_id('searchbutton').click()
 
-    while True: #esperando o carregamento do site
-        try:
-            
-            driver.find_element_by_xpath('/html/body/div[1]/div[5]/table[2]/tbody/tr/td/table/tbody/tr[2]/td/table/tbody/tr/td[1]/div/ul/li[1]')
-            break
+def pesquisa(driver:webdriver,pesquisa:str,page_start:int):
 
-        except Exception as e:
-            print(e)
+    produtos = pegando_dados(driver,pesquisa,page_start)
+    salvar_dados_xml_saida('teset', produtos)
 
-    
-
-    pegando_dados(driver,pesquisa)
 
 
     
