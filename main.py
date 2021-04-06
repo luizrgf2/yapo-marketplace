@@ -1,6 +1,8 @@
 from selenium import webdriver
 import undetected_chromedriver
 from loja_yapo import pesquisa
+from leitor_escritor_exel import *
+import numpy
 
 def webdriver_complete(visivel:bool):
 
@@ -21,4 +23,20 @@ def webdriver_complete(visivel:bool):
 
 driver = webdriver_complete(True)
 
-pesquisa(driver, 'camisa',93)
+
+def main():
+
+    file_read = leitor_exel()
+
+    try:
+
+        pg = int(file_read['pg'])
+        pesquisa(driver, file_read['pesquisa'], pg, file_read['output_file'])
+    
+    except:
+        
+        pesquisa(driver, file_read['pesquisa'], 1, file_read['output_file'])
+
+    driver.close()
+
+main()
