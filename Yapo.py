@@ -3,6 +3,7 @@ import undetected_chromedriver
 from loja_yapo import pesquisa
 from leitor_escritor_exel import *
 import numpy
+import os
 
 def webdriver_complete(visivel:bool):
 
@@ -38,5 +39,8 @@ def main():
         pesquisa(driver, file_read['pesquisa'], 1, file_read['output_file'])
 
     driver.close()
+
+    os.remove('tmp.csv')
+    
 
 main()

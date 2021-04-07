@@ -1,7 +1,39 @@
 from selenium import webdriver
 from time import sleep as tm
 from api_conversora import dolar_real
-import pandas as pd
+from scraping_anuncio import req
+import xlsxwriter
+
+def salvar_no_doc(outputfile):
+
+
+    file_read = open('tmp.csv', 'r', encoding='utf8').read().split('\n')
+    workbook = xlsxwriter.Workbook(outputfile)
+
+
+    worksheet = workbook.add_worksheet()
+
+    for i in range(len(file_read)):
+
+
+
+        linha_atual = file_read[i].split(',')
+
+
+        worksheet.write(f'A{i+1}', linha_atual[0])
+        worksheet.write(f'B{i+1}', linha_atual[1])
+        worksheet.write(f'C{i+1}', linha_atual[2])
+        worksheet.write(f'D{i+1}', linha_atual[3])
+        worksheet.write(f'E{i+1}', linha_atual[4])
+        worksheet.write(f'F{i+1}', linha_atual[5])
+        worksheet.write(f'G{i+1}', linha_atual[6])
+        worksheet.write(f'H{i+1}', linha_atual[7])
+        worksheet.write(f'I{i+1}', linha_atual[8])
+        worksheet.write(f'J{i+1}', linha_atual[9])
+        worksheet.write(f'K{i+1}', linha_atual[10])
+        worksheet.write(f'L{i+1}', linha_atual[11])
+
+    workbook.close()
 
 def salvar_dados_xml_saida(output_file_name:str,produto):
 
@@ -14,7 +46,8 @@ def salvar_dados_xml_saida(output_file_name:str,produto):
     link_produto = produto['link_produto']
     titulo = produto['titulo']
     cidade = produto['cidade']
-    estado = produto['estado']
+    estado = produto['estado'],
+    nome_vendedor = produto['nome_vendedor']
 
 
     text_read = ''
@@ -25,17 +58,11 @@ def salvar_dados_xml_saida(output_file_name:str,produto):
     except:
         text_read = 'ID do produto,Nome,Link,Loja,Imagem,Preço,Vendedor,Cidade,Estado,Estoque inicial,Estoque atual,Estoque vendido'
 
-    text_read=text_read+'\n'+f'{id_produto},{titulo},{link_produto},Yapo,{image_link},{preco},,{cidade},{estado},,,'
+    text_read=text_read+'\n'+f'{id_produto},{titulo},{link_produto},Yapo,{image_link},{preco},{nome_vendedor},{cidade},{estado[0]},,,'
 
     open('tmp.csv','w',encoding='utf8').write(text_read)
 
-    file_csv = pd.read_csv('tmp.csv')
-    file_csv.to_excel(output_file_name)
-
-
-
-
-
+    salvar_no_doc(output_file_name)
 
 def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
@@ -78,42 +105,36 @@ def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
         for produto in produtos:
 
-            titulo = produto.find_element_by_class_name('title').text
+            link_produto = produto.find_element_by_class_name('title').get_attribute('href')
+
+            try:
+                Req = req(link_produto)
+
+                titulo = Req['nome_anuncio']
 
 
-            if str(titulo).upper().find(pesquisa) != -1 or str(titulo).lower().find(pesquisa) != -1 or str(titulo).title().find(pesquisa) != -1: # virificando se existe o termo da pesquisa no titulo do anuncio.
+                if str(titulo).upper().find(pesquisa) != -1 or str(titulo).lower().find(pesquisa) != -1 or str(titulo).title().find(pesquisa) != -1: # virificando se existe o termo da pesquisa no titulo do anuncio.
 
-                print('Contem o termo ||'+titulo)
+                    print('Contem o termo ||'+titulo)
 
 
 
-                try:
-                    preco_parcial = float(produto.find_element_by_class_name('price').text.strip(' ').split('$ ')[1])
-                    preco = dolar_real(preco_parcial)
-
-                
-                
-                    id_produto = produto.get_attribute('id')
-                    image_link = produto.find_element_by_class_name('image').get_attribute('src')
-                    link_produto = produto.find_element_by_class_name('title').get_attribute('href')
-                    titulo = produto.find_element_by_class_name('title').text
-                    cidade = produto.find_element_by_class_name('commune').text
-                    estado = produto.find_element_by_class_name('region').text
-
-                    
+            
                     produto_final ={
-                        'id':id_produto,
-                        'image_link':image_link,
-                        'preco':preco,
+                        'id':Req['id_anuncio'],
+                        'image_link':Req['image_link'],
+                        'preco':Req['preco'],
                         'link_produto':link_produto,
                         'titulo':titulo,
-                        'cidade':cidade,
-                        'estado':estado
+                        'cidade':Req['cidade'],
+                        'estado':Req['estado'],
+                        'nome_vendedor':Req['nome_vendedor']
                     }
 
                     salvar_dados_xml_saida(output_file, produto_final)
-                except Exception as e:
-                    print(e)
+            except Exception as e:
+                print(e)
+                pass
 
         i+=1
 
@@ -123,7 +144,6 @@ def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
     
     return produtos_final
-
 
 def pesquisa(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
