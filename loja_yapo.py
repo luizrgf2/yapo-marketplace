@@ -17,7 +17,14 @@ def salvar_no_doc(outputfile):
 
 
 
-        linha_atual = file_read[i].split(',')
+        linha_atual = file_read[i].split('[]')
+        
+        
+        
+        
+        
+        
+        
 
 
         worksheet.write(f'A{i+1}', linha_atual[0])
@@ -56,9 +63,9 @@ def salvar_dados_xml_saida(output_file_name:str,produto):
     try:
         text_read = open('tmp.csv','r',encoding='utf8').read()
     except:
-        text_read = 'ID do produto,Nome,Link,Loja,Imagem,Preço,Vendedor,Cidade,Estado,Estoque inicial,Estoque atual,Estoque vendido'
+        text_read = 'ID do produto[]Nome[]Link[]Loja[]Imagem[]Preço[]Vendedor[]Cidade[]Estado[]Estoque inicial[]Estoque atual[]Estoque vendido'
 
-    text_read=text_read+'\n'+f'{id_produto},{titulo},{link_produto},Yapo,{image_link},{preco},{nome_vendedor},{cidade},{estado[0]},,,'
+    text_read=text_read+'\n'+f'{id_produto}[]{titulo}[]{link_produto}[]Yapo[]{image_link}[]{preco}[]{nome_vendedor}[]{cidade}[]{estado[0]}[][][]'
 
     open('tmp.csv','w',encoding='utf8').write(text_read)
 
