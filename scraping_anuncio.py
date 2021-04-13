@@ -25,17 +25,14 @@ def preco_final(numero_str:str):
 
 def req(link):
 
-    response= requests.get(link)
+    response= requests.get(link,verify=True)
 
 
     text_editavel = response.text
 
+    open('test.txt','w').write(text_editavel)
 
-
-   
-
-
-    regiao_aux = text_editavel.split('<style>.seller-info__block-scroll { overflow: hidden !important }</style>')[1].split('storeurl=""')[0].split('region="')[1].split('"')[0]
+    regiao_aux = text_editavel.split('region="')[3].split('"')[0]
     nome_vendedor = text_editavel.split("username='")[1].split("'")[0]
     estado = regiao_aux.split(',')[0]
     cidade = regiao_aux.split(',')[1]

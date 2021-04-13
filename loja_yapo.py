@@ -3,13 +3,14 @@ from time import sleep as tm
 from api_conversora import dolar_real
 from scraping_anuncio import req
 import xlsxwriter
+import os
 
 def salvar_no_doc(outputfile):
 
 
+    tm(1)
     file_read = open('tmp.csv', 'r', encoding='utf8').read().split('\n')
     workbook = xlsxwriter.Workbook(outputfile)
-
 
     worksheet = workbook.add_worksheet()
 
@@ -19,13 +20,6 @@ def salvar_no_doc(outputfile):
 
         linha_atual = file_read[i].split('[]')
         
-        
-        
-        
-        
-        
-        
-
 
         worksheet.write(f'A{i+1}', linha_atual[0])
         worksheet.write(f'B{i+1}', linha_atual[1])
@@ -42,7 +36,7 @@ def salvar_no_doc(outputfile):
 
     workbook.close()
 
-def salvar_dados_xml_saida(output_file_name:str,produto):
+def salvar_dados_xml_saida(produto):
 
         
         
@@ -69,7 +63,8 @@ def salvar_dados_xml_saida(output_file_name:str,produto):
 
     open('tmp.csv','w',encoding='utf8').write(text_read)
 
-    salvar_no_doc(output_file_name)
+    numero = int(open('n.txt','r').read())
+    open('n.txt','w').write(str(numero+1))
 
 def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
@@ -138,7 +133,7 @@ def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
                         'nome_vendedor':Req['nome_vendedor']
                     }
 
-                    salvar_dados_xml_saida(output_file, produto_final)
+                    salvar_dados_xml_saida(produto_final)
             except Exception as e:
                 print(e)
                 pass
@@ -155,6 +150,7 @@ def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
 def pesquisa(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
     produtos = pegando_dados(driver,pesquisa,page_start,output_file)
+    salvar_no_doc(output_file)
 
 
 

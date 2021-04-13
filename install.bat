@@ -6,3 +6,4 @@ pip install xlsxwriter
 pip install numpy
 pip install xlrd
 pip install openpyxl
+pip install readlargefile

@@ -17,7 +17,8 @@ def webdriver_complete(visivel:bool):
 
 
 
-    driver = webdriver.Chrome(executable_path='./chromedriver.exe')
+
+    driver = webdriver.Chrome(executable_path='./chromedriver.exe', chrome_options=option)
 
 
     return driver
