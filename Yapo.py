@@ -41,10 +41,7 @@ def main():
 
     driver.close()
 
-    try:
-        os.remove('tmp.csv')
-    except:
-        print('Finalizado')
+
     
 
 main()

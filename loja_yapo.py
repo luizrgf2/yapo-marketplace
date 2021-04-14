@@ -36,6 +36,10 @@ def salvar_no_doc(outputfile):
 
     workbook.close()
 
+    try:
+        os.remove('tmp.csv')
+    except:
+        print('Finalizado')
 def salvar_dados_xml_saida(produto):
 
         
@@ -59,12 +63,10 @@ def salvar_dados_xml_saida(produto):
     except:
         text_read = 'ID do produto[]Nome[]Link[]Loja[]Imagem[]Preço[]Vendedor[]Cidade[]Estado[]Estoque inicial[]Estoque atual[]Estoque vendido'
 
-    text_read=text_read+'\n'+f'{id_produto}[]{titulo}[]{link_produto}[]Yapo[]{image_link}[]{preco}[]{nome_vendedor}[]{cidade}[]{estado[0]}[][][]'
+    text_read=text_read+'\n'+f'[]{titulo}[]{link_produto}[]Yapo[]{image_link}[]{preco}[]{nome_vendedor}[]{cidade}[]{estado[0]}[][][]'
 
     open('tmp.csv','w',encoding='utf8').write(text_read)
 
-    numero = int(open('n.txt','r').read())
-    open('n.txt','w').write(str(numero+1))
 
 def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
@@ -151,7 +153,6 @@ def pesquisa(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
     produtos = pegando_dados(driver,pesquisa,page_start,output_file)
     salvar_no_doc(output_file)
-
 
 
     

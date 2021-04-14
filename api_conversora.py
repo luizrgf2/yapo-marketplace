@@ -12,4 +12,13 @@ def dolar_real(valor_dolar:float):
 
     valor_final = float(text_init.split(',')[0]+'.'+text_init.split(',')[1])
 
-    return valor_dolar*valor_final
+    print(valor_final)
+
+    valor_aux = float(valor_dolar*valor_final).real
+
+    valor_string = ''
+    try:
+        valor_string = str(valor_aux).split('.')[0]+','+str(valor_aux).split('.')[1]+'.'+str(valor_aux).split('.')[2]
+    except:
+        valor_string = str(valor_aux).split('.')[0]+','+str(valor_aux).split('.')[1]
+    return valor_string
