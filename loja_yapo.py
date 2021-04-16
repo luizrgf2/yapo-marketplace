@@ -9,7 +9,11 @@ def salvar_no_doc(outputfile):
 
 
     tm(1)
-    file_read = open('tmp.csv', 'r', encoding='utf8').read().split('\n')
+    try:
+        file_read = open('tmp.csv', 'r', encoding='utf8').read().split('\n')
+    except:
+        print('Não possui arquivo temporario!')
+        return
     workbook = xlsxwriter.Workbook(outputfile)
 
     worksheet = workbook.add_worksheet()
@@ -66,8 +70,6 @@ def salvar_dados_xml_saida(produto):
     text_read=text_read+'\n'+f'[]{titulo}[]{link_produto}[]Yapo[]{image_link}[]{preco}[]{nome_vendedor}[]{cidade}[]{estado[0]}[][][]'
 
     open('tmp.csv','w',encoding='utf8').write(text_read)
-
-
 def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
 
@@ -148,7 +150,6 @@ def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
     
     return produtos_final
-
 def pesquisa(driver:webdriver,pesquisa:str,page_start:int,output_file):
 
     produtos = pegando_dados(driver,pesquisa,page_start,output_file)
