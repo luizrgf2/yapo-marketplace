@@ -37,6 +37,7 @@ def salvar_no_doc(outputfile):
         worksheet.write(f'J{i+1}', linha_atual[9])
         worksheet.write(f'K{i+1}', linha_atual[10])
         worksheet.write(f'L{i+1}', linha_atual[11])
+        worksheet.write(f'M{i+1}', linha_atual[12])
 
     workbook.close()
 
@@ -65,9 +66,9 @@ def salvar_dados_xml_saida(produto):
     try:
         text_read = open('tmp.csv','r',encoding='utf8').read()
     except:
-        text_read = 'ID do produto[]Nome[]Link[]Loja[]Imagem[]Preço[]Vendedor[]Cidade[]Estado[]Estoque inicial[]Estoque atual[]Estoque vendido'
+        text_read = 'ID do produto[]Nome[]Link[]Loja[]Imagem[]Preço[]Vendedor[]Cidade[]Estado[]Estoque inicial[]Estoque atual[]Estoque vendido[]Código do produto'
 
-    text_read=text_read+'\n'+f'{id_produto}[]{titulo}[]{link_produto}[]Yapo[]{image_link}[]{preco}[]{nome_vendedor}[]{cidade}[]{estado[0]}[][][]'
+    text_read=text_read+'\n'+f'[]{titulo}[]{link_produto}[]Yapo[]{image_link}[]{preco}[]{nome_vendedor}[]{cidade}[]{estado[0]}[][][][]{id_produto}'
 
     open('tmp.csv','w',encoding='utf8').write(text_read)
 def pegando_dados(driver:webdriver,pesquisa:str,page_start:int,output_file):
